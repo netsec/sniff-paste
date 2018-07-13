@@ -93,14 +93,14 @@ class PasteDBConnector(object):
         nmapper.setDaemon(True)
         nmapper.start()
 
-    def isFiltered(ip):
+    def isFiltered(self,ip):
         with open("res/nmapfilter.conf") as ipFilters:
             for networkString in ipFilters:
                 ip=IPv4(ip)
                 network=IPv4Net(networkString.rstrip("\r\n"))
                 if(ip in network):
 
-                    self.logger.debug("["+ip+"] is a filtered address, do not scan.")
+                    self.logger.debug("["+str(ip)+"] is a filtered address, do not scan.")
                     return True
         return False
 
@@ -421,7 +421,7 @@ class PasteDBConnector(object):
                 
                 print("NMAP WORKER CALLED ["+finding+"]")
                 print("Left on stack: " +str(len(IPStack)))
-                if(isFiltered(finding)==False):
+                if(self.isFiltered(finding)==False):
 
                     self.logger.debug('Nmap scan on IP: ' + finding)
                     try:
