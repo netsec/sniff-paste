@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
-
+from ipaddress import IPv4Address as IPv4
+from ipaddress import IPv4Network as IPv4Net
 import logging
 import socket
 import logging.handlers
@@ -28,7 +29,6 @@ debug = False
 
 IPStack = []
 
-nmapFilter= ["127.0.0.1","192.168.1.1","192.168.0.1","0.0.0.0","255.255.255.255","10.0.0.1","10.0.0.0",'192.168.1.256']
 
 secretRegexes = {
     "Slack Token": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
@@ -92,6 +92,18 @@ class PasteDBConnector(object):
         nmapper = threading.Thread(target=self._scan_network)
         nmapper.setDaemon(True)
         nmapper.start()
+
+    def isFiltered(ip):
+        with open("res/nmapfilter.conf") as ipFilters:
+            for networkString in ipFilters:
+                ip=IPv4(ip)
+                network=IPv4Net(networkString.rstrip("\r\n"))
+                if(ip in network):
+
+                    self.logger.debug("["+ip+"] is a filtered address, do not scan.")
+                    return True
+        return False
+
 
     def _get_db_engine(self, **kwargs):
         from sqlalchemy import create_engine
@@ -409,7 +421,7 @@ class PasteDBConnector(object):
                 
                 print("NMAP WORKER CALLED ["+finding+"]")
                 print("Left on stack: " +str(len(IPStack)))
-                if(finding not in nmapFilter):
+                if(isFiltered(finding)==False):
 
                     self.logger.debug('Nmap scan on IP: ' + finding)
                     try:
@@ -426,8 +438,8 @@ class PasteDBConnector(object):
                     if("up" in state):
                         portScan= nm[finding]['tcp']
 
-                        self.logger.debug(finding+": up\tports: "+str(portScan))
                 
+                        self.logger.debug(finding+": up\tports: "+str(portScan))
                         for key, value in portScan.items():
                             print(finding+":"+str(key))
 
