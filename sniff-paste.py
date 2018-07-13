@@ -29,6 +29,7 @@ debug = False
 IPStack = []
 
 nmapFilter= ["127.0.0.1","192.168.1.1","192.168.0.1","0.0.0.0","255.255.255.255","10.0.0.1","10.0.0.0",'192.168.1.256']
+
 secretRegexes = {
     "Slack Token": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
     "RSA private key": "-----BEGIN RSA PRIVATE KEY-----",
@@ -319,8 +320,8 @@ class PasteDBConnector(object):
                 try:
                     self.session.add(phone_model)
                     self.session.commit()
-                except:
-                    print("Error: Phone model not committed, session rollback")
+                except Exception as e:
+                    print("Error: Phone model not committed, session rollback: "+str(e))
                     self.session.rollback()
 
             except:
@@ -351,7 +352,6 @@ class PasteDBConnector(object):
             
             for finding in findings:
                 totalCryptoFindings+=1
-                print("\t"+key+": "+finding)
                 crypto_model = self.crypto_model(
                     genre=key,
                     content=finding,
@@ -412,7 +412,10 @@ class PasteDBConnector(object):
                 if(finding not in nmapFilter):
 
                     self.logger.debug('Nmap scan on IP: ' + finding)
-                    nm.scan(finding, arguments='-sV')
+                    try:
+                        nm.scan(finding, arguments='-sV')
+                    except Exception as e:
+                        print("Nmap scan error: "+str(e))
 
                     print("Nmap Scan ["+finding+"] Complete")
                     try:
