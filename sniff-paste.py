@@ -25,7 +25,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.dialects.mysql import LONGTEXT
 
 
-debug = True
+debug = False
 
 IPStack = []
 
@@ -329,12 +329,12 @@ class PasteDBConnector(object):
                         phone=finding,
                         link=pasteLink
                     )
-                try:
-                    self.session.add(phone_model)
-                    self.session.commit()
-                except Exception as e:
-                    print("Error: Phone model not committed, session rollback: "+str(e))
-                    self.session.rollback()
+                    try:
+                        self.session.add(phone_model)
+                        self.session.commit()
+                    except Exception as e:
+                        print("Error: Phone model not committed, session rollback: "+str(e))
+                        self.session.rollback()
 
             except:
                print("Error: Phone number submission")  
