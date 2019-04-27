@@ -28,7 +28,7 @@ This will scrape pastebin for the latest number of pastes, then run analysis for
 	- `emails` -- stores emails with extension to paste
 	- `links` -- stores urls with extension to paste
 	- `ip` -- stores ip with connectivity and extension to paste
-	- `phones` -- stores phone unmbers with extension to paste
+	- `phones` -- stores phone numbers with extension to paste
 	- `secrets` -- stores secret type with extension to paste
 	- `ports` -- stores port scan info (port, status, service, version, ip)
 	- `cryptos` -- stores cryptocurrency findings with extension to paste 
@@ -40,4 +40,4 @@ This will scrape pastebin for the latest number of pastes, then run analysis for
 
 - Please contribute! If there's an error let me know -- even better if you can fix it :)
 	- Regex Contributions would be very helpful, and should be pretty easy to add!
-- Please don't use this project maliciously, it is meant to be an analysis tool
+- This tool is in the process of a bigger update, where the scraper can send all new pastes to my new project needmorecowbell/Funnel. I'm trying to consolidate all of my osint tools into one streamlined solution.
